@@ -1,6 +1,6 @@
 <h1>Login</h1>
 <div class="container">
-<small calss="alert alert-warning" *ngIf='invalidLogin'>{{errorMessage}}</small>
+<h6 class="alert alert-warning" *ngIf='invalidLogin'>{{errorMessage}}</h6>
 <div>
 User Name: <input type="text" name="username" [(ngModel)]="username">
 Password: <input type="password" name="password" [(ngModel)]="password">
