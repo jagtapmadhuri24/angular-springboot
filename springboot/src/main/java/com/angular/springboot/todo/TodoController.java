@@ -36,5 +36,12 @@ public class TodoController {
 		return ResponseEntity.notFound().build();
 	
 	}
+	
+	@GetMapping("/users/{username}/todos")
+	public Todo updateTodo(@PathVariable long id, @PathVariable String username){
+		return service.findById(id);
+	}
+	
+	
 
 }
