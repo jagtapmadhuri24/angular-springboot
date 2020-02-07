@@ -3,7 +3,8 @@
 //import org.springframework.boot.SpringApplication;
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { WelcomeDataService } from '../service/data/welcome-data.service';
+import { WelcomeDataService, HelloWorld } from '../service/data/welcome-data.service';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 //@ComponentScan(value="com.practice.angular")
 @Component({
@@ -25,15 +26,14 @@ export class WelcomeComponent implements OnInit {
 
   //ActivatedRoute is to map the variable from previous page(caller page)
   //SpringBootFirstApplication(){}
-  constructor(private route: ActivatedRoute, private service: WelcomeDataService) {
+  constructor(private route: ActivatedRoute, private service: WelcomeDataService,
+    private http:HttpClient) {
 
   }
 
   //SomeInterface's method to override.
   ngOnInit() {
     //this method executes when WelcomeComponent is initialized.
-    //console.log(this.message);
-    //console.log(this.route.snapshot.params['name']);
     this.name = this.route.snapshot.params["name"];
   }
 
@@ -57,9 +57,29 @@ export class WelcomeComponent implements OnInit {
   }
 
   getWelcomeMsgWithPathVariable(){
-    this.service.executeHelloWorldBeanServiceWithPathVariable(this.name).subscribe(
-      response => this.handleSuccessfulResponse(response)
-    );
+  let header = new HttpHeaders({
+   Authorization: sessionStorage.getItem("token")
+ });
+   let name=sessionStorage.getItem("authenticatedUser");
+   return this.http.get<HelloWorld>(`http://localhost:8080/helloWorld/pathVariable/${name}`, {
+        headers: header
+      }).subscribe(
+        data => {
+          this.handleSuccessfulResponse(data);
+        }
+      )
+
+
+
+    // this.service.executeHelloWorldBeanServiceWithPathVariable(this.name).subscribe(
+    //   response => {this.handleSuccessfulResponse(response);},
+    //   error=>{
+    //     this.handleErrorMsg(error);
+    //   }
+    // );
 
   }
+
+  
+
 }
