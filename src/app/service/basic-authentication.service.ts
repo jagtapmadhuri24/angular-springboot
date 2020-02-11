@@ -1,12 +1,27 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { map } from "rxjs/operators";
+import { API_URL } from "../app.constants";
 
+export const TOKEN = "token";
+export const AUTHENTICATED_USER = "authenticatedUser";
 @Injectable({
   providedIn: "root"
 })
 export class BasicAuthenticationService {
   constructor(private http: HttpClient) {}
+
+  executeJWTAuthService(username, password) {
+    return this.http
+      .post<any>(`${API_URL}/authenticate`, { username, password })
+      .pipe(
+        map(data => {
+          sessionStorage.setItem(AUTHENTICATED_USER, username);
+          sessionStorage.setItem(TOKEN, `Bearer ${data.token}`);
+          return data;
+        })
+      );
+  }
 
   executeAuthService(username, password) {
     // Here, username= user : password= pwd
@@ -15,34 +30,35 @@ export class BasicAuthenticationService {
       Authorization: basicAuthHeaderStr
     });
     return this.http
-      .get<AuthenticationBean>("http://localhost:8080/basicAuth", {
+      .get<AuthenticationBean>(`${API_URL}/basicAuth`, {
         headers: header
       })
       .pipe(
         map(data => {
-          sessionStorage.setItem("authenticatedUser", username);
-          sessionStorage.setItem("token", basicAuthHeaderStr);
+          sessionStorage.setItem(AUTHENTICATED_USER, username);
+          sessionStorage.setItem(TOKEN, basicAuthHeaderStr);
           return data;
         })
       );
   }
 
   getAuthenticatedUser() {
-    return sessionStorage.getItem("authenticatedUser");
+    return sessionStorage.getItem(AUTHENTICATED_USER);
   }
-  
+
   getAuthenticatedToken() {
     if (this.getAuthenticatedUser()) {
-      return sessionStorage.getItem("token");
+      return sessionStorage.getItem(TOKEN);
     }
   }
 
   isUserLoggedIn() {
-    let user = sessionStorage.getItem("authenticatedUser");
+    let user = sessionStorage.getItem(AUTHENTICATED_USER);
     return !(user == null);
   }
   logout() {
-    sessionStorage.removeItem("authenticatedUser");
+    sessionStorage.removeItem(AUTHENTICATED_USER);
+    sessionStorage.removeItem(TOKEN);
   }
 
   /*createBasicAuthHttpHeader() {

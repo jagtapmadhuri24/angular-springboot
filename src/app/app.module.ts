@@ -27,15 +27,15 @@ import { HttpInterceptorBasicAuthService } from './service/http/http-interceptor
     LogoutComponent,
     TodoComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule
-  ],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpInterceptorBasicAuthService,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
-//{provide:HTTP_INTERCEPTORS,useClass: HttpInterceptorBasicAuthService,multi:true}
+export class AppModule {}
+//
